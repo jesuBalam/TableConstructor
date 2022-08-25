@@ -1,0 +1,10 @@
+E:\Developer\Hiuman\C#\XmlData\TableConstructor\TableConstructor\TableConstructor\bin\Debug\TableConstructor.exe.config
+E:\Developer\Hiuman\C#\XmlData\TableConstructor\TableConstructor\TableConstructor\bin\Debug\TableConstructor.exe
+E:\Developer\Hiuman\C#\XmlData\TableConstructor\TableConstructor\TableConstructor\bin\Debug\TableConstructor.pdb
+E:\Developer\Hiuman\C#\XmlData\TableConstructor\TableConstructor\TableConstructor\obj\Debug\TableConstructor.csprojAssemblyReference.cache
+E:\Developer\Hiuman\C#\XmlData\TableConstructor\TableConstructor\TableConstructor\obj\Debug\TableConstructor.csproj.CoreCompileInputs.cache
+E:\Developer\Hiuman\C#\XmlData\TableConstructor\TableConstructor\TableConstructor\obj\Debug\TableConstructor.exe
+E:\Developer\Hiuman\C#\XmlData\TableConstructor\TableConstructor\TableConstructor\obj\Debug\TableConstructor.pdb
+E:\Developer\Hiuman\C#\XmlData\TableConstructor\TableConstructor\TableConstructor\bin\Debug\Newtonsoft.Json.dll
+E:\Developer\Hiuman\C#\XmlData\TableConstructor\TableConstructor\TableConstructor\bin\Debug\Newtonsoft.Json.xml
+E:\Developer\Hiuman\C#\XmlData\TableConstructor\TableConstructor\TableConstructor\obj\Debug\TableConstructor.csproj.CopyComplete
