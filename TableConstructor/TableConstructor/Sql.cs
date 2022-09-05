@@ -140,5 +140,17 @@ namespace TableConstructor
             string query = $"SELECT * FROM {Reader.MASTER_NAME_TABLE} where version = '{version}' and IdEstacion='{idEstacion}' and RFC='{rfc}' and FechaArchivo='{fileDate}'";            
             return query;
         }
+
+        public static string GetQueryFindRecCabeceraId(int idVol, string folioUnicoRecepcion, string claveProductoPEMEX, string folioUnicoRelacion)
+        {
+            string query = $"SELECT * FROM RECCabecera where Id={idVol} and folioUnicoRecepcion = '{folioUnicoRecepcion}' and claveProductoPEMEX='{claveProductoPEMEX}' and folioUnicoRelacion='{folioUnicoRelacion}'";
+            return query;
+        }
+
+        public static string GetQueryFindVtaCabeceraId(int idVol, int numReg, int numDis, int idMang, string pemexId, decimal volSum, decimal sellsVol)
+        {
+            string query = $"SELECT * FROM RECCabecera where Id={idVol} and numeroTotalRegistrosDetalle = {numReg} and numeroDispensario={numDis} and identificadorManguera={idMang} and claveProductoPEMEX='{pemexId}'  and sumatoriaVolumenDespachado={volSum} and sumatoriaVentas={sellsVol}";
+            return query;
+        }
     }
 }

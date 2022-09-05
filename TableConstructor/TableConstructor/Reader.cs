@@ -116,13 +116,14 @@ namespace TableConstructor
                 var rec = json.SelectToken("controlesvolumetricos:ControlesVolumetricos.controlesvolumetricos:REC");
 
                 DataRow rowRec = Tables.recTable.NewRow();
-                rowRec["IdCVolumetrico"] = Convert.ToInt32(idVol);//myDateTime; //TODO GET IDCVOLUM!!!
+                rowRec["IdCVolumetrico"] = Convert.ToInt32(idVol);
                 rowRec["TotalRecepciones"] = (int)rec.SelectToken("@totalRecepciones");
                 rowRec["TotalDocumentos"] = (int)rec.SelectToken("@totalDocumentos");
                 Tables.recTable.Rows.Add(rowRec);
 
                 if ((int)rec.SelectToken("@totalRecepciones") > 0)
                 {
+                    List<int?> idList = new List<int?>();
                     foreach (var recH in rec.SelectToken("controlesvolumetricos:RECCabecera"))
                     {
                         DataRow rowRecH = Tables.recHeaderTable.NewRow();
@@ -132,10 +133,25 @@ namespace TableConstructor
                         rowRecH["folioUnicoRelacion"] = recH.SelectToken("@folioUnicoRelacion").ToString();
                         Tables.recHeaderTable.Rows.Add(rowRecH);
                     }
+                    if (isModified)
+                    {
+                        Tables.recHeaderTable.AcceptChanges();
+                        foreach (DataRow r in Tables.recHeaderTable.Rows) r.SetModified();
+                    }
+                    Sql.InjectData(Tables.recHeaderTable);
+
+                    foreach(DataRow rowHeader in Tables.recHeaderTable.Rows)
+                    {
+                        string idHeader = Sql.ExecuteQueryReader(Sql.GetQueryFindRecCabeceraId(Convert.ToInt32(rowHeader["IdCVolumetrico"]), rowHeader["folioUnicoRecepcion"].ToString(), rowHeader["claveProductoPEMEX"].ToString(), rowHeader["folioUnicoRelacion"].ToString()), 0);
+                        idList.Add(idHeader != string.Empty ? Convert.ToInt32(idHeader) : (int?)null);
+                    }
+
+                    int counter = 0;
                     foreach (var recD in rec.SelectToken("controlesvolumetricos:RECDetalle"))
                     {
                         DataRow rowRecD = Tables.recDetailTable.NewRow();
                         rowRecD["IdCVolumetrico"] = Convert.ToInt32(idVol);//myDateTime; //TODO GET IDCVOLUM!!!
+                        rowRecD["IdCabecera"] = Convert.ToInt32(idList[counter]);
                         rowRecD["folioUnicoRelacion"] = recD.SelectToken("@folioUnicoRelacion").ToString();
                         rowRecD["folioUnicoRecepcion"] = recD.SelectToken("@folioUnicoRecepcion").ToString();
                         rowRecD["numeroDeTanque"] = (int)recD.SelectToken("@numeroDeTanque");
@@ -145,6 +161,7 @@ namespace TableConstructor
                         rowRecD["temperatura"] = (decimal)recD.SelectToken("@temperatura");
                         rowRecD["fechaYHoraRecepcion"] = DateTime.Parse(recD.SelectToken("@fechaYHoraRecepcion").ToString());
                         Tables.recDetailTable.Rows.Add(rowRecD);
+                        counter++;
                     }
 
                 }
@@ -178,6 +195,7 @@ namespace TableConstructor
 
                 if ((int)vta.SelectToken("@numTotalRegistrosDetalle") > 0)
                 {
+                    List<int?> idList = new List<int?>();
                     foreach (var vtaH in vta.SelectToken("controlesvolumetricos:VTACabecera"))
                     {
                         DataRow rowVtaH = Tables.vtaHeaderTable.NewRow();
@@ -191,10 +209,24 @@ namespace TableConstructor
                         Tables.vtaHeaderTable.Rows.Add(rowVtaH);
 
                     }
+                    if (isModified)
+                    {
+                        Tables.vtaHeaderTable.AcceptChanges();
+                        foreach (DataRow r in Tables.vtaHeaderTable.Rows) r.SetModified();
+                    }
+                    Sql.InjectData(Tables.vtaHeaderTable);
+                    foreach (DataRow rowHeader in Tables.vtaHeaderTable.Rows)
+                    {
+                        string idHeader = Sql.ExecuteQueryReader(Sql.GetQueryFindVtaCabeceraId(Convert.ToInt32(rowHeader["IdCVolumetrico"]), (int)rowHeader["numeroTotalRegistrosDetalle"], (int)rowHeader["numeroDispensario"], (int)rowHeader["identificadorManguera"], rowHeader["claveProductoPEMEX"].ToString(), (decimal)rowHeader["sumatoriaVolumenDespachado"],(decimal)rowHeader["sumatoriaVentas"]), 0);
+                        idList.Add(idHeader != string.Empty ? Convert.ToInt32(idHeader) : (int?)null);
+                    }
+
+                    int counter = 0;
                     foreach (var vtaD in vta.SelectToken("controlesvolumetricos:VTADetalle"))
                     {
                         DataRow rowVtaD = Tables.vtaDetailTable.NewRow();
                         rowVtaD["IdCVolumetrico"] = Convert.ToInt32(idVol);//myDateTime; //TODO GET IDCVOLUM!!!
+                        rowVtaD["IdCabecera"] = Convert.ToInt32(idList[counter]);
                         rowVtaD["tipoDeRegistro"] = vtaD.SelectToken("@tipoDeRegistro").ToString();
                         rowVtaD["numeroUnicoTransaccionVenta"] = vtaD.SelectToken("@numeroUnicoTransaccionVenta").ToString();
                         rowVtaD["numeroDispensario"] = (int)vtaD.SelectToken("@numeroDispensario");
@@ -205,7 +237,7 @@ namespace TableConstructor
                         rowVtaD["importeTotalTransaccion"] = (decimal)vtaD.SelectToken("@importeTotalTransaccion");
                         rowVtaD["fechaYHoraTransaccionVenta"] = DateTime.Parse(vtaD.SelectToken("@fechaYHoraTransaccionVenta").ToString());
                         Tables.vtaDetailTable.Rows.Add(rowVtaD);
-
+                        counter++;
                     }
                 }
 
@@ -246,33 +278,30 @@ namespace TableConstructor
                 {
                     Tables.exiTable.AcceptChanges();
                     Tables.recTable.AcceptChanges();
-                    Tables.recHeaderTable.AcceptChanges();
+                    
                     Tables.recDetailTable.AcceptChanges();
                     Tables.recDocumentsTable.AcceptChanges();
                     Tables.vtaTable.AcceptChanges();
-                    Tables.vtaHeaderTable.AcceptChanges();
+                    
                     Tables.vtaDetailTable.AcceptChanges();
                     Tables.tqsTable.AcceptChanges();
                     Tables.disTable.AcceptChanges();
                     foreach (DataRow r in Tables.exiTable.Rows) r.SetModified();
-                    foreach (DataRow r in Tables.recTable.Rows) r.SetModified();
-                    foreach (DataRow r in Tables.recHeaderTable.Rows) r.SetModified();
+                    foreach (DataRow r in Tables.recTable.Rows) r.SetModified();                    
                     foreach (DataRow r in Tables.recDetailTable.Rows) r.SetModified();
                     foreach (DataRow r in Tables.recDocumentsTable.Rows) r.SetModified();
                     foreach (DataRow r in Tables.vtaTable.Rows) r.SetModified();
-                    foreach (DataRow r in Tables.vtaHeaderTable.Rows) r.SetModified();
+                    
                     foreach (DataRow r in Tables.vtaDetailTable.Rows) r.SetModified();
                     foreach (DataRow r in Tables.tqsTable.Rows) r.SetModified();
                     foreach (DataRow r in Tables.disTable.Rows) r.SetModified();
                 }
 
                 Sql.InjectData(Tables.exiTable);
-                Sql.InjectData(Tables.recTable);
-                Sql.InjectData(Tables.recHeaderTable);
+                Sql.InjectData(Tables.recTable);                
                 Sql.InjectData(Tables.recDetailTable);
                 Sql.InjectData(Tables.recDocumentsTable);
-                Sql.InjectData(Tables.vtaTable);
-                Sql.InjectData(Tables.vtaHeaderTable);
+                Sql.InjectData(Tables.vtaTable);                
                 Sql.InjectData(Tables.vtaDetailTable);
                 Sql.InjectData(Tables.tqsTable);
                 Sql.InjectData(Tables.disTable);
@@ -289,22 +318,15 @@ namespace TableConstructor
             string regexGo = @"^\s*GO\s*$";
             Console.WriteLine("Reading data");
             IEnumerable<string> commandStrings = Regex.Split(script, regexSemicolon, RegexOptions.Multiline | RegexOptions.IgnoreCase);
-            Console.WriteLine("Executing querys");
-            //Integrated Security=SSPI;
-            SqlConnection connection = new SqlConnection(string.Format("Data Source={0};database={1};Integrated Security=SSPI; User ID={2};Password={3}", ConfigurationManager.AppSettings["ServerDatabase"], ConfigurationManager.AppSettings["Database"], ConfigurationManager.AppSettings["User"], ConfigurationManager.AppSettings["Pass"]));
-            connection.Open();
+            Console.WriteLine("Executing querys");           
             foreach (string commandString in commandStrings)
             {
                 if (!string.IsNullOrWhiteSpace(commandString.Trim()))
                 {
-                    using (var command = new SqlCommand(commandString, connection))
-                    {
-                        command.ExecuteNonQuery();                        
-                        Console.WriteLine("Completed query");
-                    }
+                    Sql.ExecuteQuery(commandString);
                 }
             }
-            connection.Close();
+            
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,8 @@ namespace TableConstructor
         {
             if (!Sql.CheckTableExist())
             {
-                Sql.ExecuteQuery(Tables.GetQueryGenerateTables());
+                //Sql.ExecuteQuery(Tables.GetQueryGenerateTables());
+                Reader.ReadQuery(ConfigurationManager.AppSettings["PathQueryConstruct"]);
             }
             Reader.ProcessDirectory(@"C:\Users\enriq\Downloads\Ulises2017-Sep-Dic\Diciembre");
             Console.ReadKey();

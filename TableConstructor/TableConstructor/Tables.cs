@@ -71,6 +71,7 @@ namespace TableConstructor
             DataColumn IdColumnRecD = recDetailTable.Columns.Add("Id", typeof(Int32));
             IdColumnRecD.AutoIncrement = true;
             recDetailTable.Columns.Add("IdCVolumetrico", typeof(Int32));
+            recDetailTable.Columns.Add("IdCabecera", typeof(Int32));
             recDetailTable.Columns.Add("folioUnicoRelacion", typeof(string));
             recDetailTable.Columns.Add("folioUnicoRecepcion", typeof(string));
             recDetailTable.Columns.Add("numeroDeTanque", typeof(Int32));
@@ -114,6 +115,7 @@ namespace TableConstructor
             DataColumn IdColumnVtaD = vtaDetailTable.Columns.Add("Id", typeof(Int32));
             IdColumnVtaD.AutoIncrement = true;
             vtaDetailTable.Columns.Add("IdCVolumetrico", typeof(Int32));
+            recDetailTable.Columns.Add("IdCabecera", typeof(Int32));
             vtaDetailTable.Columns.Add("tipoDeRegistro", typeof(string));
             vtaDetailTable.Columns.Add("numeroUnicoTransaccionVenta", typeof(string));
             vtaDetailTable.Columns.Add("numeroDispensario", typeof(Int32));
@@ -194,13 +196,14 @@ namespace TableConstructor
                                                 TotalDocumentos int)
 
                                                 CREATE TABLE RECCabecera(  Id int IDENTITY(1,1) PRIMARY KEY,
-                                                IdCVolumetrico int FOREIGN KEY REFERENCES CVolumetrico(Id),
+                                                IdCVolumetrico int FOREIGN KEY REFERENCES CVolumetrico(Id),                                                
                                                 folioUnicoRecepcion varchar(100),
                                                 claveProductoPEMEX varchar(100),
                                                 folioUnicoRelacion varchar(100))
 
                                                 CREATE TABLE RECDetalle(  Id int IDENTITY(1,1) PRIMARY KEY,
                                                 IdCVolumetrico int FOREIGN KEY REFERENCES CVolumetrico(Id),
+                                                IdCabecera int FOREIGN KEY REFERENCES RECCabecera(Id),
                                                 folioUnicoRelacion varchar(100),
                                                 folioUnicoRecepcion varchar(100),
                                                 numeroDeTanque int,
@@ -211,7 +214,7 @@ namespace TableConstructor
                                                 fechaYHoraRecepcion datetime)
 
                                                 CREATE TABLE RECDocumentos(  Id int IDENTITY(1,1) PRIMARY KEY,
-                                                IdCVolumetrico int FOREIGN KEY REFERENCES CVolumetrico(Id),
+                                                IdCVolumetrico int FOREIGN KEY REFERENCES CVolumetrico(Id),                                                
                                                 folioUnicoRelacion varchar(100),
                                                 folioUnicoRecepcion varchar(100),
                                                 terminalAlmacenamientoYDistribucion int,
@@ -226,7 +229,7 @@ namespace TableConstructor
                                                 numTotalRegistrosDetalle int)
 
                                                 CREATE TABLE VTACabecera(  Id int IDENTITY(1,1) PRIMARY KEY,
-                                                IdCVolumetrico int FOREIGN KEY REFERENCES CVolumetrico(Id),
+                                                IdCVolumetrico int FOREIGN KEY REFERENCES CVolumetrico(Id),                                                
                                                 numeroTotalRegistrosDetalle int,
                                                 numeroDispensario int,
                                                 identificadorManguera int,
@@ -236,6 +239,7 @@ namespace TableConstructor
 
                                                 CREATE TABLE VTADetalle(  Id int IDENTITY(1,1) PRIMARY KEY,
                                                 IdCVolumetrico int FOREIGN KEY REFERENCES CVolumetrico(Id),
+                                                IdCabecera int FOREIGN KEY REFERENCES VTACabecera(Id),
                                                 tipoDeRegistro varchar(100),
                                                 numeroUnicoTransaccionVenta varchar(100),
                                                 numeroDispensario int,
